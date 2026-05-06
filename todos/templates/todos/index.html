@@ -1,0 +1,36 @@
+{% extends 'todos/base.html' %}
+{% block content %}
+<h1>📝 My To-Dos</h1>
+<p class="stats">{{ done }} of {{ total }} tasks completed</p>
+
+<div class="card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      {{ form.title }}
+      <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+  </form>
+
+  {% if todos %}
+    {% for todo in todos %}
+    <div class="todo-item">
+      <form method="post" action="{% url 'toggle' todo.pk %}">
+        {% csrf_token %}
+        <input type="checkbox" class="checkbox" onchange="this.form.submit()" {% if todo.completed %}checked{% endif %}>
+      </form>
+      <span class="todo-title {% if todo.completed %}done{% endif %}">{{ todo.title }}</span>
+      <div class="actions">
+        <a href="{% url 'edit' todo.pk %}" class="btn btn-ghost">✏️</a>
+        <form method="post" action="{% url 'delete' todo.pk %}" onsubmit="return confirm('Delete this task?')">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">🗑️</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p class="empty">No tasks yet. Add one above!</p>
+  {% endif %}
+</div>
+{% endblock %}

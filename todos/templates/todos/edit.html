@@ -1,0 +1,15 @@
+{% extends 'todos/base.html' %}
+{% block content %}
+<h1>✏️ Edit Task</h1>
+<p class="stats">Update your task below</p>
+<div class="card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      {{ form.title }}
+      <button type="submit" class="btn btn-success">Save</button>
+      <a href="{% url 'index' %}" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
