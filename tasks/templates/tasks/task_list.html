@@ -1,0 +1,45 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}My Tasks{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3">My Tasks</h1>
+    <a href="{% url 'task_create' %}" class="btn btn-primary">+ Add Task</a>
+</div>
+
+{% if tasks %}
+    <div class="list-group">
+        {% for task in tasks %}
+            <div class="list-group-item list-group-item-action {% if task.completed %}task-completed{% endif %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="task-title fw-semibold">{{ task.title }}</span>
+                        {% if task.description %}
+                            <p class="mb-0 text-muted small">{{ task.description }}</p>
+                        {% endif %}
+                        <small class="text-muted">Added {{ task.created_at|date:"M d, Y" }}</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <form method="post" action="{% url 'task_toggle' task.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm {% if task.completed %}btn-secondary{% else %}btn-success{% endif %}">
+                                {% if task.completed %}Undo{% else %}Done{% endif %}
+                            </button>
+                        </form>
+                        <a href="{% url 'task_update' task.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <p class="mt-3 text-muted small">
+        {{ tasks|length }} task{{ tasks|length|pluralize }}
+    </p>
+{% else %}
+    <div class="text-center py-5">
+        <p class="text-muted fs-5">No tasks yet. <a href="{% url 'task_create' %}">Add your first task!</a></p>
+    </div>
+{% endif %}
+{% endblock %}
